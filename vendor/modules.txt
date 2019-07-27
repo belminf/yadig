@@ -1,0 +1,34 @@
+# github.com/aws/aws-sdk-go-v2 v0.10.0
+github.com/aws/aws-sdk-go-v2/aws/external
+github.com/aws/aws-sdk-go-v2/aws
+github.com/aws/aws-sdk-go-v2/aws/awserr
+github.com/aws/aws-sdk-go-v2/aws/defaults
+github.com/aws/aws-sdk-go-v2/aws/ec2metadata
+github.com/aws/aws-sdk-go-v2/aws/ec2rolecreds
+github.com/aws/aws-sdk-go-v2/aws/endpointcreds
+github.com/aws/aws-sdk-go-v2/aws/stscreds
+github.com/aws/aws-sdk-go-v2/internal/ini
+github.com/aws/aws-sdk-go-v2/service/sts
+github.com/aws/aws-sdk-go-v2/internal/awsutil
+github.com/aws/aws-sdk-go-v2/internal/sdk
+github.com/aws/aws-sdk-go-v2/aws/endpoints
+github.com/aws/aws-sdk-go-v2/aws/signer/v4
+github.com/aws/aws-sdk-go-v2/private/protocol/query
+github.com/aws/aws-sdk-go-v2/private/protocol/rest
+github.com/aws/aws-sdk-go-v2/private/protocol/query/queryutil
+github.com/aws/aws-sdk-go-v2/private/protocol/xml/xmlutil
+github.com/aws/aws-sdk-go-v2/private/protocol
+# github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af
+github.com/jmespath/go-jmespath
+# golang.org/x/net v0.0.0-20190724013045-ca1201d0de80
+golang.org/x/net/http2
+golang.org/x/net/http/httpguts
+golang.org/x/net/http2/hpack
+golang.org/x/net/idna
+# golang.org/x/text v0.3.2
+golang.org/x/text/secure/bidirule
+golang.org/x/text/unicode/bidi
+golang.org/x/text/unicode/norm
+golang.org/x/text/transform
+# gopkg.in/go-ini/ini.v1 v1.44.0
+gopkg.in/go-ini/ini.v1
