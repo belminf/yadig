@@ -1,6 +1,6 @@
 # yadig
 
-Your AWS Dig. Well, really more like `dig -x` but...
+Your AWS `dig`. Well, really more like `dig -x` but...
 
 ## Install
 
@@ -11,4 +11,4 @@ go get github.com/belminf/yadig
 ## Usage
 
 ## License
-[GNU GPLv3](LICENSE)
+[GNU GPLv3](LICENSE.md)
