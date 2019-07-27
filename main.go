@@ -2,7 +2,8 @@ package main
 
 import (
 	"fmt"
-	"yadig/profiles"
+
+	"github.com/belminf/yadig/profiles"
 )
 
 func main() {

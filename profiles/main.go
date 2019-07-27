@@ -2,19 +2,18 @@ package profiles
 
 import (
 	"fmt"
-	"os/user"
 
+	"github.com/aws/aws-sdk-go-v2/aws/external"
 	ini "gopkg.in/go-ini/ini.v1"
 )
 
 //FromCredentials returns all profiles in the ~/.aws/credentials file
 func FromCredentials() (ret []string) {
 
-	// Get user directory
-	usr, err := user.Current()
-
+	// Get profrile list
+	credsIni := external.DefaultSharedCredentialsFilename()
 	// Load INI from typical path
-	cfg, err := ini.Load(usr.HomeDir + "/.aws/credentials")
+	cfg, err := ini.Load(credsIni)
 	if err != nil {
 		fmt.Printf("Fail to read: %v", err)
 	}
