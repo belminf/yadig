@@ -2,15 +2,16 @@ package profiles
 
 import (
 	"fmt"
+	"strings"
 
 	ini "gopkg.in/go-ini/ini.v1"
 )
 
-//FromCredentials returns all profiles in the ~/.aws/credentials file
-func FromCredentials(credsIniPath string) (ret []string) {
+//FromConfig returns all profiles in the ~/.aws/config file
+func FromConfig(configIniPath string) (ret []string) {
 
 	// Load INI from typical path
-	cfg, err := ini.Load(credsIniPath)
+	cfg, err := ini.Load(configIniPath)
 	if err != nil {
 		fmt.Printf("Fail to read: %v", err)
 	}
@@ -18,12 +19,14 @@ func FromCredentials(credsIniPath string) (ret []string) {
 	// Filter profile results
 	for _, s := range cfg.SectionStrings() {
 
+		splitSect := strings.SplitN(s, " ", 2)
+
 		// Ignore DEFAULT
-		if s == "DEFAULT" {
+		if splitSect[0] != "profile" {
 			continue
 		}
 
-		ret = append(ret, s)
+		ret = append(ret, splitSect[1])
 	}
 
 	return
