@@ -18,23 +18,46 @@ type MatchedEni struct {
 	Attached    bool
 }
 
+//ProfileSessionType holds info about an AWS profile session
+type ProfileSessionType struct {
+	Profile string
+	Region  string
+	Session *session.Session
+}
+
 var (
 	//ConfigIniPath is the path AWS credentials file
 	ConfigIniPath = defaults.SharedConfigFilename()
 	credsIniPath  = defaults.SharedCredentialsFilename()
 )
 
-//InterfacesWithIP gets all ENIs that match the IP in the AWS profile and region
-func InterfacesWithIP(profile string, region string, ip string) []MatchedEni {
+//ProfileSession returns an AWS session for a profile
+func ProfileSession(profile, region string) *ProfileSessionType {
+	profileSession := ProfileSessionType{
+		Profile: profile,
+	}
+
+	sessOptions := session.Options{
+		Profile:           profile,
+		SharedConfigState: session.SharedConfigEnable,
+	}
+
+	//Force region if provided
+	if region != "" {
+		sessOptions.Config = aws.Config{Region: aws.String(region)}
+	}
+
+	profileSession.Session = session.Must(session.NewSessionWithOptions(sessOptions))
+	profileSession.Region = *profileSession.Session.Config.Region
+
+	return &profileSession
+}
+
+//InterfacesWithIP gets all ENIs that match the IP in the AWS profile and region ("" = default region)
+func InterfacesWithIP(profileSession *ProfileSessionType, ip string) []MatchedEni {
 
 	ret := []MatchedEni{}
-
-	sess := session.Must(session.NewSessionWithOptions(session.Options{
-		Config:  aws.Config{Region: aws.String(region)},
-		Profile: profile,
-	}))
-
-	svc := ec2.New(sess)
+	svc := ec2.New(profileSession.Session)
 
 	params := &ec2.DescribeNetworkInterfacesInput{
 		Filters: []*ec2.Filter{
@@ -66,7 +89,12 @@ func InterfacesWithIP(profile string, region string, ip string) []MatchedEni {
 		},
 	)
 	if err != nil {
-		fmt.Println("Error", err)
+		fmt.Printf(
+			"Error for %s/%s: %s\n",
+			profileSession.Profile,
+			profileSession.Region,
+			err,
+		)
 	}
 	return ret
 }
