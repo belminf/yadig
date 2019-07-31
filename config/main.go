@@ -14,9 +14,21 @@ import (
 
 //AWSProfileRegion is a profile and region pair
 type AWSProfileRegion struct {
-	Profile string `yaml:"profile"`
-	Region  string `yaml:"region"`
-	Alias   string `yaml:"alias,omitempty"`
+	Profile  string `yaml:"profile"`
+	Region   string `yaml:"region"`
+	AliasVal string `yaml:"alias,omitempty"`
+}
+
+//Alias for profile/region pair
+func (pr *AWSProfileRegion) Alias() string {
+	if pr.AliasVal != "" {
+		return pr.AliasVal
+	}
+	if pr.Region != "" {
+		return fmt.Sprintf("%s/%s", pr.Profile, pr.Region)
+	}
+
+	return pr.Profile
 }
 
 //Config struct for yadig
