@@ -41,8 +41,9 @@ func newMatchedEni(svc *ec2.EC2, eni *ec2.NetworkInterface) *MatchedEni {
 	// Default
 	return &MatchedEni{
 		Display: fmt.Sprintf(
-			"%s",
+			"%s (%s)",
 			*eni.Attachment.InstanceId,
+			ec2NameTag(svc, *eni.Attachment.InstanceId),
 		),
 	}
 }
@@ -103,4 +104,31 @@ func InterfacesWithIP(profileSession *ProfileSessionType, ip string) []MatchedEn
 		)
 	}
 	return ret
+}
+
+func ec2NameTag(svc *ec2.EC2, instanceID string) string {
+	params := &ec2.DescribeInstancesInput{
+		Filters: []*ec2.Filter{
+			&ec2.Filter{
+				Name: aws.String("instance-id"),
+				Values: []*string{
+					aws.String(instanceID),
+				},
+			},
+		},
+	}
+
+	resp, err := svc.DescribeInstances(params)
+
+	if err != nil || len(resp.Reservations) != 1 {
+		return "COULD NOT FETCH INSTANCE"
+	}
+
+	for _, tag := range resp.Reservations[0].Instances[0].Tags {
+		if *tag.Key == "Name" {
+			return *tag.Value
+		}
+	}
+
+	return "COULD NOT FIND TAG"
 }
