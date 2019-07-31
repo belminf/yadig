@@ -95,9 +95,10 @@ func InterfacesWithIP(profileSession *ProfileSessionType, ip string) []MatchedEn
 	)
 	if err != nil {
 		fmt.Printf(
-			"[ERROR] %s/%s: %s\n",
+			"[ERROR] %s/%s for %s: %s\n",
 			profileSession.Profile,
 			profileSession.Region,
+			ip,
 			err,
 		)
 	}

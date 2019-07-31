@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
 	"sync"
 
 	"github.com/belminf/yadig/aws"
@@ -29,6 +30,11 @@ func addMatchedEnis(sess *aws.ProfileSessionType, ip string, matchedEnis *matche
 func main() {
 	flag.Parse()
 	ip := flag.Arg(0)
+
+	if ip == "" {
+		fmt.Println("[ERROR] Provided no IP")
+		os.Exit(1)
+	}
 
 	// Collect results
 	results := make(profileResultsType)
