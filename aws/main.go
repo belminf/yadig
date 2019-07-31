@@ -11,11 +11,7 @@ import (
 
 //MatchedEni holds info on ENIs that matched an IP
 type MatchedEni struct {
-	OwnerID     string
-	InstanceID  string
-	Description string
-	VpcID       string
-	Attached    bool
+	Display string
 }
 
 //ProfileSessionType holds info about an AWS profile session
@@ -30,6 +26,26 @@ var (
 	ConfigIniPath = defaults.SharedConfigFilename()
 	credsIniPath  = defaults.SharedCredentialsFilename()
 )
+
+func newMatchedEni(svc *ec2.EC2, eni *ec2.NetworkInterface) *MatchedEni {
+	if *eni.Status == "available" {
+		return &MatchedEni{
+			Display: fmt.Sprintf("Unattached in %s", *eni.VpcId),
+		}
+	} else if *eni.Attachment.InstanceOwnerId == "amazon-elb" {
+		return &MatchedEni{
+			Display: fmt.Sprintf("ELB (%s)", *eni.Description),
+		}
+	}
+
+	// Default
+	return &MatchedEni{
+		Display: fmt.Sprintf(
+			"%s",
+			*eni.Attachment.InstanceId,
+		),
+	}
+}
 
 //ProfileSession returns an AWS session for a profile
 func ProfileSession(profile, region string) *ProfileSessionType {
@@ -72,25 +88,14 @@ func InterfacesWithIP(profileSession *ProfileSessionType, ip string) []MatchedEn
 		params,
 		func(page *ec2.DescribeNetworkInterfacesOutput, lastPage bool) bool {
 			for _, eni := range page.NetworkInterfaces {
-				thisEni := MatchedEni{
-					Description: *eni.Description,
-					Attached:    *eni.Status != "available",
-					VpcID:       *eni.VpcId,
-				}
-
-				if eni.Attachment != nil {
-					thisEni.OwnerID = *eni.Attachment.InstanceOwnerId
-					thisEni.InstanceID = *eni.Attachment.InstanceId
-				}
-
-				ret = append(ret, thisEni)
+				ret = append(ret, *newMatchedEni(svc, eni))
 			}
 			return true
 		},
 	)
 	if err != nil {
 		fmt.Printf(
-			"Error for %s/%s: %s\n",
+			"[ERROR] %s/%s: %s\n",
 			profileSession.Profile,
 			profileSession.Region,
 			err,

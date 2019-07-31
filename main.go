@@ -48,8 +48,7 @@ func main() {
 	for p, rmap := range results {
 		for r, emap := range rmap {
 			for _, e := range *emap {
-				fmt.Printf("Profile: %s, Region: %s", p, r)
-				fmt.Println(e)
+				fmt.Printf("[%s/%s] %s", p, r, e.Display)
 			}
 		}
 	}
