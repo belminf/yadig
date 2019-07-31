@@ -7,7 +7,7 @@ import (
 	"sync"
 
 	"github.com/belminf/yadig/aws"
-	"github.com/belminf/yadig/profiles"
+	"github.com/belminf/yadig/config"
 )
 
 type matchedEnisType []aws.MatchedEni
@@ -30,6 +30,7 @@ func addMatchedEnis(sess *aws.ProfileSessionType, ip string, matchedEnis *matche
 func main() {
 	flag.Parse()
 	ip := flag.Arg(0)
+	yadigConfig := config.LoadConfig(aws.ConfigIniPath)
 
 	if ip == "" {
 		fmt.Println("[ERROR] Provided no IP")
@@ -39,12 +40,12 @@ func main() {
 	// Collect results
 	results := make(profileResultsType)
 	wg := sync.WaitGroup{}
-	for _, p := range profiles.FromConfig(aws.ConfigIniPath) {
-		results[p] = make(regionResultsType)
-		sess := aws.ProfileSession(p, "")
-		r := sess.Region
+	for _, pr := range yadigConfig.ProfileRegions {
+		results[pr.Profile] = make(regionResultsType)
+		sess := aws.ProfileSession(pr.Profile, pr.Region)
+		pr.Region = sess.Region
 		me := make(matchedEnisType, 0, 0)
-		results[p][r] = &me
+		results[pr.Profile][pr.Region] = &me
 		wg.Add(1)
 		go addMatchedEnis(sess, ip, &me, &wg)
 	}
