@@ -36,6 +36,10 @@ func newMatchedEni(svc *ec2.EC2, eni *ec2.NetworkInterface) *MatchedEni {
 		return &MatchedEni{
 			Display: fmt.Sprintf("ELB (%s)", *eni.Description),
 		}
+	} else if *eni.Attachment.InstanceOwnerId == "amazon-aws" {
+		return &MatchedEni{
+			Display: fmt.Sprintf("AWS (%s)", *eni.Description),
+		}
 	}
 
 	// Default
